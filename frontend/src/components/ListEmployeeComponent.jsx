@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import EmployeeService from '../Services/EmployeeServices'
 export default class ListEmployeeComponent extends Component {
 
     constructor(props) {
@@ -10,7 +10,14 @@ export default class ListEmployeeComponent extends Component {
         }
     }
 
+    componentWillMount() {
+        EmployeeService.getEmployees().then((res) => {
+            this.setState({employees: res.data})
+        })
+    }2
+
   render() {
+      console.log(this.state.employees)
     return (
       <div>
           <h2 className="text-center"> Employee List </h2>
