@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import EmployeeService from '../Services/EmployeeServices'
-export default class CreateEmployeeComponent extends Component {
 
+export default class UpdateEmployeeComponent extends Component {
 constructor(props) {
     super(props)
 
     this.state = {
+        id: this.props.match.params.id,
         firstName: '',
         lastName: '',
         emailId: ''
@@ -13,7 +14,7 @@ constructor(props) {
     this.changeFirstNameHandler = this.changeFirstNameHandler.bind(this)
     this.changeLastNameHandler = this.changeLastNameHandler.bind(this)
     this.changeEmailHandler = this.changeEmailHandler.bind(this)
-    this.saveEmployee = this.saveEmployee.bind(this)
+    this.updateEmployee = this.updateEmployee.bind(this)
     this.cancel = this.cancel.bind(this)
 
 
@@ -28,16 +29,24 @@ constructor(props) {
     changeEmailHandler = (e) => {
         this.setState({emailId: e.target.value});
     }
-    saveEmployee = (e) => {
+
+    componentDidMount() {
+        EmployeeService.getEmployeeById(this.state.id).then((res) => {
+            let employee = res.data
+            this.setState({ 
+                firstName: employee.firstName,
+                lastName: employee.lastName,
+                emailId: employee.emailId,    
+            })
+        })
+    }
+    updateEmployee = (e) => {
         e.preventDefault();
         let employee = {
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             emailId: this.state.emailId
         }
-        EmployeeService.createEmployee(employee).then(res =>{
-            this.props.history.push('/employees')
-        })
         console.log('employee => ' + JSON.stringify(employee))
     }
 
@@ -50,7 +59,7 @@ constructor(props) {
         <div className="container"> 
             <div className="row">
                 <div className="card col-md-6 offset-md-3 offset-md-3">
-                    <h3 className="text-center">Add Employee</h3>
+                    <h3 className="text-center">Update Employee</h3>
                     <div className="card-body">
                         <form>
                             <div className="form-group">
@@ -79,7 +88,7 @@ constructor(props) {
                                     onChange={this.changeEmailHandler} 
                                 />
                             </div>
-                            <button className="btn btn-success" onClick={this.saveEmployee}> Save </button>
+                            <button className="btn btn-success" onClick={this.updateEmployee}> Save </button>
                             <button className="btn btn-danger" onClick={this.cancel}> Cancel</button>
                         </form>
                     </div>
